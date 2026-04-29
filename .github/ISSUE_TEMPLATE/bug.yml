@@ -1,0 +1,83 @@
+name: Bug Report
+description: Report a bug in skylight-cli
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the information below.
+
+  - type: input
+    id: version
+    attributes:
+      label: skylight-cli version
+      description: Run `skylight version` and paste the output
+      placeholder: '{"version": "0.1.0"}'
+    validations:
+      required: true
+
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      description: Run `sw_vers -productVersion`
+      placeholder: "14.3.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: command
+    attributes:
+      label: Which command?
+      options:
+        - screenshot
+        - click
+        - wait-for-selector
+        - get-window-state
+        - list-elements
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: command-run
+    attributes:
+      label: Exact command run
+      description: The full command you executed
+      placeholder: skylight screenshot --pid 1234 --mode som --output test.png
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output (stdout + stderr)
+      description: Paste the full JSON output
+      render: json
+    validations:
+      required: true
+
+  - type: input
+    id: exit-code
+    attributes:
+      label: Exit code
+      description: Run `echo $?` right after the command
+      placeholder: "3"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other information (target app, screenshots, etc.)

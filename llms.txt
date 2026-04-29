@@ -1,0 +1,98 @@
+# skylight-cli — LLM Context File
+
+> This file follows the llms.txt convention. It provides structured context for LLMs interacting with this repository.
+
+## Identity
+
+- **Name:** skylight-cli
+- **Type:** Command-line tool (CLI)
+- **Language:** Swift 5.9+
+- **Platform:** macOS 12+ only
+- **Purpose:** Window capture, accessibility tree inspection, Set-of-Marks overlay rendering, and stealth clicking via private SkyLight framework
+
+## One-Sentence Summary
+
+A macOS CLI that captures windows by PID, walks the Accessibility tree, draws numbered overlays on interactive elements, and clicks them without moving the visible cursor.
+
+## Entry Points
+
+- **For agents:** Read `AGENTS.md` first — it contains the decision tree, hard rules, output contract, and anti-patterns.
+- **For humans:** Read `README.md` for usage examples.
+- **For contributors:** Read `CONTRIBUTING.md` for commit conventions and PR process.
+
+## Commands
+
+| Command | Purpose | Key Flags |
+|---------|---------|-----------|
+| `screenshot` | Capture window + optional SoM overlay | `--pid`, `--mode`, `--output`, `--include-tree` |
+| `click` | Click element by index | `--pid`, `--index` |
+| `wait-for-selector` | Poll for AX element matching criteria | `--pid`, `--role`, `--label`, `--timeout` |
+| `get-window-state` | Return window frame + frontmost status | `--pid` |
+| `list-elements` | Dump AX tree as JSON | `--pid`, `--max-depth` |
+| `version` | Print version JSON | (none) |
+| `help` | Print usage | (none) |
+
+## Output Contract
+
+- **All output goes to stdout as a single JSON object.**
+- **Never print logs, banners, or human text to stdout.**
+- Success: `{"status": "ok", "command": "...", ...}`
+- Error: `{"status": "error", "code": "...", "message": "..."}`
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | Internal error |
+| 2 | Bad arguments |
+| 3 | Element/window not found |
+| 4 | I/O or click rejection |
+| 5 | Timeout |
+
+## Key Files
+
+```
+Sources/skylight/
+├── main.swift             # Entry point, command dispatch
+├── CLI.swift              # Subcommand implementations
+├── WindowCapture.swift    # CGWindowList → CGImage
+├── AXElementFinder.swift  # Accessibility tree walker
+├── SoMOverlay.swift       # Badge rendering
+├── SkyLightClicker.swift  # dlopen SkyLight, CGEventPostToPid
+└── Utils.swift            # ArgParser, JSON output, errors
+```
+
+## Hard Rules
+
+1. Stdout is JSON-only
+2. One command = one JSON object
+3. Exit codes are stable contracts
+4. Never statically link SkyLight.framework
+5. No business logic in this repo
+6. No external dependencies (SPM stays clean)
+7. macOS 12+ only
+8. Never log user content
+
+## Related Repositories
+
+This CLI is part of the Stealth Triade:
+- `skylight-cli` (this) — window capture + AX + clicking
+- `playstealth-cli` — browser launching with fingerprint config
+- `unmask-cli` — detection surface checks
+
+The orchestrator (brain) lives in a separate repository.
+
+## Build
+
+```bash
+swift build -c release
+# Binary: .build/release/skylight
+```
+
+## Quick Test
+
+```bash
+PID=$(pgrep -n "Safari")
+.build/release/skylight get-window-state --pid $PID | jq .
+```
