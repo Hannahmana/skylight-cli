@@ -1,0 +1,70 @@
+name: Agent Confusion Report
+description: Report when an AI agent misunderstood this repo
+title: "[Agent]: "
+labels: ["documentation", "agent-experience"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This template is for reporting cases where an AI agent (GPT, Claude, Copilot, etc.) 
+        misunderstood something about this repository.
+        
+        These reports help us improve AGENTS.md and documentation.
+
+  - type: input
+    id: agent
+    attributes:
+      label: Which agent?
+      description: The AI that got confused
+      placeholder: "GPT-4, Claude 3, GitHub Copilot, etc."
+    validations:
+      required: true
+
+  - type: textarea
+    id: task
+    attributes:
+      label: What was the agent trying to do?
+      description: The goal or task
+      placeholder: "Add a new command to list windows by app name"
+    validations:
+      required: true
+
+  - type: textarea
+    id: confusion
+    attributes:
+      label: What did the agent misunderstand?
+      description: The specific misconception
+      placeholder: "Agent tried to add Python code / used print() instead of Output.json() / etc."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category of confusion
+      options:
+        - Wrong language/framework assumptions
+        - Misunderstood output contract (JSON stdout)
+        - Violated hard rules in AGENTS.md
+        - Could not find the right file
+        - Did not read documentation first
+        - Misunderstood architecture/boundaries
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: docs-checked
+    attributes:
+      label: Which docs did the agent read (if known)?
+      description: List files the agent mentioned reading
+      placeholder: |
+        - AGENTS.md
+        - README.md
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested documentation fix
+      description: How could we make this clearer?
+      placeholder: "Add explicit warning about X in AGENTS.md section Y"

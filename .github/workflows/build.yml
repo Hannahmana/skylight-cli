@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-14
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '5.9'
+
+      - name: Build Debug
+        run: swift build
+
+      - name: Build Release
+        run: swift build -c release
+
+      - name: Run Smoke Tests
+        run: |
+          chmod +x scripts/smoke-test.sh
+          ./scripts/smoke-test.sh
+
+      - name: Upload Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: skylight-macos
+          path: .build/release/skylight
+          if-no-files-found: error
